@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>AMARE - Finalizar Pedido</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <link href="img/favicon.ico" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="css/style.min.css" rel="stylesheet">
+
+    <style>
+        .qty-controls { display: flex; align-items: center; justify-content: center; }
+        .qty-btn { background-color: #eee; border: 1px solid #ccc; color: #333; cursor: pointer; font-weight: bold; width: 30px; height: 30px; line-height: 28px; text-align: center; border-radius: 50%; }
+        .qty-value { padding: 0 10px; font-weight: bold; font-size: 1.1em; min-width: 40px; text-align: center; }
+        
+        /* Estilos del Modal */
+        .auth-container { max-width: 450px; margin: 0 auto; padding: 0; }
+        .auth-container h2 { text-align: center; margin-bottom: 10px; }
+        .auth-container p { text-align: center; color: #666; margin-bottom: 30px; }
+        .auth-form-group { margin-bottom: 20px; }
+        .auth-form-group input { width: 100%; height: 50px; padding: 10px 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .auth-button { width: 100%; padding: 15px; font-size: 1.1em; font-weight: bold; color: #fff; background-color: #8B4513; border: none; border-radius: 5px; cursor: pointer; }
+        .auth-toggle-link { text-align: center; margin-top: 25px; }
+        .auth-toggle-link a { color: #DA9F5B; font-weight: bold; cursor: pointer; }
+        #register-form-modal { display: none; }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid p-0 nav-bar">
+        <nav class="navbar navbar-expand-lg bg-none navbar-dark py-3">
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                <div class="navbar-nav ml-auto p-4">
+                    <a href="index.html" class="nav-item nav-link">Inicio</a>
+                    <a href="menu.html" class="nav-item nav-link">Menu</a>
+                    
+                    <a href="#" id="login-link" class="nav-item nav-link" data-toggle="modal" data-target="#loginRegisterModal">
+                        <i class="fas fa-user" style="font-size: 1.1em; margin-right: 5px;"></i>
+                        Iniciar Sesión
+                    </a>
+
+                    <div class="nav-item dropdown" id="user-dropdown" style="display: none;">
+
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            <i class="fas fa-user" style="font-size: 1.1em; margin-right: 5px;"></i>
+                            <span id="user-name-display">Usuario</span>
+                        </a>
+
+                        <div class="dropdown-menu text-capitalize">
+                            <a href="cuenta.html" class="dropdown-item">Mi Cuenta / Perfil</a>
+                            <a href="pago.html" class="dropdown-item">Mi Carrito</a>
+                            <a href="index.html" class="dropdown-item">Volver al Inicio</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" onclick="logout()">Cerrar Sesión</a>
+                        </div>
+                    </div>
+                    
+                    <a href="pago.html" class="nav-item nav-link active"> <i class="fas fa-shopping-cart" style="font-size: 1.1em;"></i>
+                        <span id="cart-counter-span" style="font-size: 0.8em; font-weight: bold; color: #DA9F5B; vertical-align: top;">(0)</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="container-fluid page-header mb-5 position-relative overlay-bottom">
+        <div class="d-flex flex-column align-items-center justify-content-center pt-0 pt-lg-5" style="min-height: 400px">
+            <h1 class="display-4 mb-3 mt-0 mt-lg-5 text-white text-uppercase">Finalizar Pedido</h1>
+            <div class="d-inline-flex mb-lg-5">
+                <p class="m-0 text-white"><a class="text-white" href="menu.html">Menu</a></p>
+                <p class="m-0 text-white px-2">/</p>
+                <p class="m-0 text-white">Carrito</p>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid pt-5">
+        <div class="container">
+            <div class="section-title">
+                <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Revisa tu Pedido</h4>
+                <h1 class="display-4">Resumen del Carrito</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div id="cart-items-container" style="margin-bottom: 20px;">
+                        </div>
+                    <hr>
+                    <div class="text-right">
+                        <h3 style="color: #DA9F5B;">Total: $<span id="cart-total-price">0.00</span></h3>
+                    </div>
+                    <hr>
+                    <div class="text-right">
+                        <button id="confirm-order-btn" class="btn btn-primary btn-lg" style="font-size: 1.2em; padding: 15px 30px;">
+                            Confirmar y Enviar Pedido
+                        </button>
+                    </div>
+                    <div id="order-status-message" class="mt-4"></div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="p-4" style="background-color: #f7f7f7; border-radius: 5px;">
+                        <h4 class="text-primary">Datos del Cliente</h4>
+                        <p>Este pedido se registrará a nombre de:</p>
+                        <h5 class="mb-0" id="customer-name-display">Cargando...</h5>
+                        <small>(Cliente ID: <span id="customer-id-display">N/A</span>)</small>
+                        <hr>
+                        <small id="client-note-message">Los datos se cargan desde tu sesión.</small>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="loginRegisterModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body" style="padding: 40px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: absolute; top: 15px; right: 20px;"><span aria-hidden="true">&times;</span></button>
+                    <div id="login-form-modal" class="auth-container">
+                        <form onsubmit="handleLogin(event)">
+                            <h2>Conectarme a mi cuenta</h2>
+                            <p>Ingresa tu e-mail y contraseña:</p>
+                            <div class="auth-form-group"><input type="email" id="login-email" placeholder="Email" required></div>
+                            <div class="auth-form-group"><input type="password" id="login-password" placeholder="Contraseña" required></div>
+                            <button type="submit" class="auth-button">ENTRAR</button>
+                            <div class="auth-toggle-link">¿Nuevo cliente? <a onclick="showRegisterFormModal()">Crear cuenta</a></div>
+                        </form>
+                    </div>
+                    <div id="register-form-modal" class="auth-container">
+                        <form onsubmit="handleRegister(event)">
+                            <h2>Crear mi cuenta</h2>
+                            <p>Por favor completa la siguiente información:</p>
+                            <div class="auth-form-group"><input type="text" id="register-name" placeholder="Nombre" required></div>
+                            <div class="auth-form-group"><input type="text" id="register-lastname" placeholder="Apellidos" required></div>
+                            <div class="auth-form-group"><input type="email" id="register-email" placeholder="Email" required></div>
+                            <div class="auth-form-group"><input type="password" id="register-password" placeholder="Contraseña" required></div>
+                            <small style="display: block; text-align: center; margin-bottom: 20px; color: #777;">
+                                Al continuar acepto los <a href="#" style="color: #DA9F5B;">Términos, Condiciones</a> y <a href="#" style="color: #DA9F5B;">Aviso de Privacidad</a>.
+                            </small>
+                            <button type="submit" class="auth-button">CREAR MI CUENTA</button>
+                            <div class="auth-toggle-link">¿Ya tienes una cuenta? <a onclick="showLoginFormModal()">Entrar aquí</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid footer text-white mt-5 pt-5 px-0 position-relative overlay-top">
+        <div class="row mx-0 pt-5 px-sm-3 px-lg-5 mt-4 justify-content-between"> 
+            
+            <div class="col-lg-3 col-md-6 mb-5">
+                <h4 class="text-white text-uppercase mb-4" style="letter-spacing: 3px;">Contactanos</h4>
+                <p><i class="fa fa-map-marker-alt mr-2"></i>Del Tecnológico 420, Corredor Industrial la Ciénega, 72220 Heroica Puebla de Zaragoza, Pue., Mexico</p>
+                <p><i class="fa fa-phone-alt mr-2"></i>+52 2211562756</p>
+                <p class="m-0"><i class="fa fa-envelope mr-2"></i>i21220655.19@puebla.tecnm.mx</p>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-5 text-center mx-auto">
+                
+                <h4 class="text-white text-uppercase mb-4" style="letter-spacing: 3px;">
+                    <a href="acerca.html" class="text-white" style="text-decoration: none;">Acerca de nosotros</a>
+                </h4>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-5 text-right ml-auto">
+                <h4 class="text-white text-uppercase mb-4" style="letter-spacing: 3px;">Horarios</h4>
+                <div>
+                    <h6 class="text-white text-uppercase">Lunes - Viernes</h6>
+                    <p>8.00 AM - 8.00 PM</p>
+                    <h6 class="text-white text-uppercase">Sabado - Domingo</h6>
+                    <p>2.00 PM - 8.00 PM</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="container-fluid text-center text-white border-top mt-4 py-4 px-sm-3 px-md-5" style="border-color: rgba(256, 256, 256, .1) !important;">
+            <p class="mb-2 text-white">Copyright &copy; <a class="font-weight-bold" href="#">Domain</a>. All Rights Reserved.</a></p>
+            <p class="m-0 text-white">Designed by <a class="font-weight-bold" href="https://htmlcodex.com">HTML Codex</a></p>
+        </div>
+    </div>
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        // --- 1. CONFIGURACIÓN ---
+        const apiKey = 'HokaiA170603'; // ¡TU CLAVE DE ADMIN!
+        const orderApiUrl = 'http://localhost/dolibarr/api/index.php/orders';
+        const registerApiUrl = 'http://localhost/dolibarr/api/index.php/thirds'; // Para el Modal
+
+        // Leemos el ID y Nombre del cliente que se registró/logueó
+        const loggedInCustomerId = localStorage.getItem('amare_customer_id');
+        const loggedInCustomerName = localStorage.getItem('amare_customer_name');
+        
+        // --- 2. ELEMENTOS DEL HTML ---
+        const cartContainer = document.getElementById('cart-items-container');
+        const totalPriceEl = document.getElementById('cart-total-price');
+        const confirmBtn = document.getElementById('confirm-order-btn');
+        const statusMessageEl = document.getElementById('order-status-message');
+        
+        // --- 3. FUNCIONES ---
+
+        /**
+         * Carga el carrito desde localStorage y lo muestra en la página
+         */
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem('pasteleriaCart')) || [];
+            cartContainer.innerHTML = ''; 
+            let total = 0;
+
+            if (cart.length === 0) {
+                 cartContainer.innerHTML = '<div class="alert alert-warning">Tu carrito está vacío. <a href="menu.html">Vuelve al menú</a> para añadir productos.</div>';
+                 confirmBtn.disabled = true;
+            }
+
+            // Dibuja cada item
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                // =================================== -->
+                // PIEZA 5: BOTONES +/- AÑADIDOS A itemHtml
+                // =================================== -->
+                const itemHtml = `
+                    <div class="row mb-3 pb-3 align-items-center" style="border-bottom: 1px solid #eee;">
+                        
+                        <div class="col-lg-6 col-md-5">
+                            <h5 class="mb-0">${item.name}</h5>
+                        </div>
+                        
+                        <div class="col-lg-3 col-md-4">
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="updateItemQuantity(${item.id}, -1)">-</button>
+                                <span class="qty-value">${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateItemQuantity(${item.id}, 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-3 col-md-3 text-right">
+                            <strong>$${itemTotal.toFixed(2)}</strong>
+                        </div>
+                    </div>
+                `;
+                cartContainer.innerHTML += itemHtml;
+            });
+
+            // Actualiza el precio total
+            totalPriceEl.innerText = total.toFixed(2);
+
+            // Actualiza dinámicamente el cuadro de "Datos del Cliente"
+            const customerNameDisplay = document.getElementById('customer-name-display');
+            const customerIdDisplay = document.getElementById('customer-id-display');
+            const clientNoteMessage = document.getElementById('client-note-message');
+
+            if (loggedInCustomerId && loggedInCustomerName) {
+                customerNameDisplay.innerText = loggedInCustomerName;
+                customerIdDisplay.innerText = loggedInCustomerId;
+                clientNoteMessage.innerText = "Tu pedido se registrará con esta cuenta.";
+            } else {
+                customerNameDisplay.innerText = "Cliente Invitado";
+                customerIdDisplay.innerText = "N/A";
+                // Añadimos el enlace para abrir el Modal si no está logueado
+                clientNoteMessage.innerHTML = '<strong style="color: red;">Debes <a href="#" onclick="$(\'#loginRegisterModal\').modal(\'show\'); return false;">iniciar sesión</a> para finalizar el pedido.</strong>';
+                confirmBtn.disabled = true;
+            }
+        }
+
+        // =================================== -->
+        // PIEZA 6: NUEVA FUNCIÓN AÑADIDA (para +/-)
+        // =================================== -->
+        function updateItemQuantity(productId, change) {
+            let cart = JSON.parse(localStorage.getItem('pasteleriaCart')) || [];
+            let itemIndex = cart.findIndex(item => item.id === productId);
+
+            if (itemIndex === -1) return; // No hace nada si no lo encuentra
+
+            cart[itemIndex].quantity += change; // Suma o resta
+
+            // Si la cantidad llega a 0, eliminamos el producto
+            if (cart[itemIndex].quantity <= 0) {
+                cart.splice(itemIndex, 1); 
+            }
+
+            localStorage.setItem('pasteleriaCart', JSON.stringify(cart));
+            
+            // Vuelve a dibujar todo
+            loadCart();
+            updateCartCounter(); // Actualiza el ícono 🛒 del navbar
+        }
+
+        /**
+         * Envía el pedido final a Dolibarr
+         */
+        function confirmOrder() {
+            console.log("Iniciando confirmación de pedido...");
+            confirmBtn.disabled = true;
+            statusMessageEl.innerHTML = '<div class="alert alert-info">Enviando pedido a Dolibarr...</div>';
+
+            let cart = JSON.parse(localStorage.getItem('pasteleriaCart')) || [];
+
+            // Verificación de seguridad
+            if (!loggedInCustomerId) {
+                statusMessageEl.innerHTML = '<div class="alert alert-danger">Error: No has iniciado sesión.</div>';
+                confirmBtn.disabled = false;
+                return;
+            }
+            
+            if (cart.length === 0) {
+                 statusMessageEl.innerHTML = '<div class="alert alert-danger">Error: Tu carrito está vacío.</div>';
+                 confirmBtn.disabled = false;
+                 return;
+            }
+
+            const orderLines = cart.map(item => {
+                return {
+                    'fk_product': item.id,
+                    'qty': item.quantity,
+                    'subprice': item.price
+                };
+            });
+            const orderDate = Math.floor(new Date().getTime() / 1000);
+
+            const orderData = {
+                'socid': loggedInCustomerId,  // El ID de tu cliente
+                'date': orderDate,            // <-- ¡LA FECHA QUE FALTABA!
+                'lines': orderLines           // Las líneas del carrito
+            };  
+
+            // Fetch (sin cambios)
+            fetch(orderApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'DOLAPIKEY': apiKey
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => {
+                if (!response.ok) { return response.json().then(err => { throw new Error(err.error.message); }); }
+                return response.json(); 
+            })
+            .then(newOrder => {
+                console.log("Pedido creado:", newOrder);
+                statusMessageEl.innerHTML = `<div class="alert alert-success">
+                                                <strong>¡Pedido creado con éxito!</strong>
+                                                <p>Tu pedido ha sido registrado en Dolibarr con el ID: <strong>${newOrder.id || newOrder}</strong></p>
+                                             </div>`;
+                localStorage.removeItem('pasteleriaCart');
+                confirmBtn.style.display = 'none';
+                updateCartCounter();
+            })
+            .catch(error => {
+                console.error('Error al crear el pedido:', error);
+                statusMessageEl.innerHTML = `<div class="alert alert-danger">
+                                                <strong>Error al crear el pedido.</strong> <p>${error.message}</p>
+                                             </div>`;
+                confirmBtn.disabled = false;
+            });
+        }
+        
+        // =================================== -->
+        // PIEZA 7: FUNCIONES DEL MODAL/LOGIN AÑADIDAS
+        // =================================== -->
+        function updateCartCounter() {
+            let cart = JSON.parse(localStorage.getItem('pasteleriaCart')) || [];
+            let count = cart.length; 
+            let counterSpan = document.getElementById('cart-counter-span');
+            if (counterSpan) {
+                if (count > 0) { counterSpan.innerText = `(${count})`; } 
+                else { counterSpan.innerText = '(0)'; }
+            }
+        }
+        
+        function updateUserStatus() {
+            const userName = localStorage.getItem('amare_customer_name');
+
+            // Obtenemos los dos elementos nuevos
+            const loginLink = document.getElementById('login-link');
+            const userDropdown = document.getElementById('user-dropdown');
+            const userNameDisplay = document.getElementById('user-name-display');
+
+            if (userName) {
+                // Si está logueado: Ocultamos "Iniciar Sesión" y mostramos "Hola, Dani"
+                if (loginLink) loginLink.style.display = 'none';
+                if (userDropdown) userDropdown.style.display = 'block';
+                if (userNameDisplay) userNameDisplay.innerText = "Hola, " + userName;
+            } else {
+                // Si NO está logueado: Mostramos "Iniciar Sesión" y ocultamos el menú
+                if (loginLink) loginLink.style.display = 'block';
+                if (userDropdown) userDropdown.style.display = 'none';
+            }
+        }
+
+        // ¡NUEVA FUNCIÓN DE LOGOUT!
+        function logout() {
+            // 1. Borramos los datos de la "sesión" del navegador
+            localStorage.removeItem('amare_customer_id');
+            localStorage.removeItem('amare_customer_name');
+            
+            alert("Has cerrado la sesión.");
+            
+            // 2. Lo redirigimos al inicio (donde se cumplirá la condición original)
+            window.location.href = 'index.html';
+        }
+
+        function handleRegister(event) {
+            event.preventDefault(); 
+            const name = document.getElementById('register-name').value;
+            const lastname = document.getElementById('register-lastname').value;
+            const email = document.getElementById('register-email').value;
+            
+            let statusMessageEl = document.querySelector('#register-form-modal .auth-toggle-link');
+            statusMessageEl.innerHTML = '<p style="color: blue;">Creando cuenta...</p>';
+
+            const customerData = {
+                'name': `${name} ${lastname}`, 'email': email, 'client': '1'
+            };
+
+            fetch(registerApiUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'DOLAPIKEY': apiKey },
+                body: JSON.stringify(customerData)
+            })
+            .then(response => {
+                if (!response.ok) { return response.json().then(err => { throw new Error(err.error.message); }); }
+                return response.json(); 
+            })
+            .then(newCustomerId => {
+                localStorage.setItem('amare_customer_id', newCustomerId);
+                localStorage.setItem('amare_customer_name', name);
+                alert('¡Bienvenido, ' + name + '! Tu cuenta ha sido creada.');
+                $('#loginRegisterModal').modal('hide'); 
+                updateUserStatus();
+                // Ahora que está logueado, recargamos la info del cliente en la página
+                window.location.reload(); 
+            })
+            .catch(error => {
+                console.error('Error al crear el cliente:', error);
+                statusMessageEl.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            });
+        }
+        
+// --- ¡ESTA ES LA FUNCIÓN "handleLogin" CORREGIDA! ---
+        
+        function handleLogin(event) {
+            event.preventDefault(); 
+            
+            const email = document.getElementById('login-email').value;
+            const adminApiKey = 'HokaiA170603'; // ¡Tu clave de Admin!
+            
+            // ===================================
+            // ¡AQUÍ ESTÁ LA CORRECCIÓN!
+            // Usamos un parámetro de búsqueda simple 'email='
+            // en lugar del filtro SQL que daba error.
+            // ===================================
+            const loginApiUrl = `http://localhost/dolibarr/api/index.php/thirdparties?email=${encodeURIComponent(email)}`;
+            
+            let statusMessageEl = document.querySelector('#login-form-modal .auth-toggle-link');
+            statusMessageEl.innerHTML = '<p style="color: blue;">Buscando cuenta...</p>';
+
+            // 3. Hacemos la llamada "GET" a Dolibarr
+            fetch(loginApiUrl, {
+                method: 'GET',
+                headers: {'Accept': 'application/json', 'DOLAPIKEY': adminApiKey }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error.message || 'Error del servidor'); });
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                // 4. Dolibarr devuelve un ARRAY (lista) de clientes que coinciden.
+                
+                if (data.length > 0) {
+                    // ¡ÉXITO! Encontramos al cliente
+                    const customer = data[0]; // Tomamos el primer resultado
+                    
+                    // 5. "Iniciamos sesión" guardando sus datos
+                    localStorage.setItem('amare_customer_id', customer.id);
+                    localStorage.setItem('amare_customer_name', customer.name.split(' ')[0]); // Guardamos solo el primer nombre
+
+                    alert('¡Bienvenido de nuevo, ' + customer.name.split(' ')[0] + '!');
+                    $('#loginRegisterModal').modal('hide');
+                    updateUserStatus(); // Actualiza el "Hola, [Nombre]"
+                    window.location.reload(); // Recarga la página
+                } else {
+                    // ¡FALLO! No se encontró el email
+                    throw new Error("Email no encontrado. Por favor, crea una cuenta.");
+                }
+            })
+            .catch(error => {
+                // ¡ERROR!
+                console.error('Error al iniciar sesión:', error);
+                statusMessageEl.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCart();
+            updateCartCounter();
+            updateUserStatus();
+        });
+        confirmBtn.addEventListener('click', confirmOrder);
+    </script>
+</body>
+</html>

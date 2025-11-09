@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>AMARE - Menú</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free Website Template" name="keywords">
+    <meta content="Free Website Template" name="description">
+
+    <link href="img/favicon.ico" rel="icon">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="css/style.min.css" rel="stylesheet">
+    
+    <style>
+        /* Estilos del Modal */
+        .auth-container { max-width: 450px; margin: 0 auto; padding: 0; }
+        .auth-container h2 { text-align: center; margin-bottom: 10px; }
+        .auth-container p { text-align: center; color: #666; margin-bottom: 30px; }
+        .auth-form-group { margin-bottom: 20px; }
+        .auth-form-group input { width: 100%; height: 50px; padding: 10px 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .auth-button { width: 100%; padding: 15px; font-size: 1.1em; font-weight: bold; color: #fff; background-color: #8B4513; border: none; border-radius: 5px; cursor: pointer; }
+        .auth-toggle-link { text-align: center; margin-top: 25px; }
+        .auth-toggle-link a { color: #DA9F5B; font-weight: bold; cursor: pointer; }
+        #register-form-modal { display: none; }
+
+        /* Estilo para el enlace del título del producto */
+        .product-link h4 {
+            color: #33211D; 
+            transition: color 0.3s ease;
+        }
+        .product-link:hover h4 {
+            color: #DA9F5B; 
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container-fluid p-0 nav-bar">
+        <nav class="navbar navbar-expand-lg bg-none navbar-dark py-3">
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                <div class="navbar-nav ml-auto p-4">
+                    <a href="index.html" class="nav-item nav-link">Inicio</a>
+                    <a href="menu.html" class="nav-item nav-link active">Menu</a> <a href="#" id="login-link" class="nav-item nav-link" data-toggle="modal" data-target="#loginRegisterModal">
+                        <i class="fas fa-user" style="font-size: 1.1em; margin-right: 5px;"></i>
+                        Iniciar Sesión
+                    </a>
+                    <div class="nav-item dropdown" id="user-dropdown" style="display: none;">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            <i class="fas fa-user" style="font-size: 1.1em; margin-right: 5px;"></i>
+                            <span id="user-name-display">Usuario</span>
+                        </a>
+                        <div class="dropdown-menu text-capitalize">
+                            <a href="cuenta.html" class="dropdown-item">Mi Cuenta / Perfil</a>
+                            <a href="pago.html" class="dropdown-item">Mi Carrito</a>
+                            <a href="index.html" class="dropdown-item">Volver al Inicio</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" onclick="logout()">Cerrar Sesión</a>
+                        </div>
+                    </div>
+                    
+                    <a href="pago.html" class="nav-item nav-link">
+                        <i class="fas fa-shopping-cart" style="font-size: 1.1em;"></i>
+                        <span id="cart-counter-span" 
+                              style="font-size: 0.8em; font-weight: bold; color: #DA9F5B; vertical-align: top;">
+                            (0)
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="container-fluid page-header mb-5 position-relative overlay-bottom">
+        <div class="d-flex flex-column align-items-center justify-content-center pt-0 pt-lg-5" style="min-height: 400px">
+            <h1 class="display-4 mb-3 mt-0 mt-lg-5 text-white text-uppercase">Menu</h1>
+            <div class="d-inline-flex mb-lg-5">
+                <p class="m-0 text-white"><a class="text-white" href="index.html">Inicio</a></p>
+                <p class="m-0 text-white px-2">/</p>
+                <p class="m-0 text-white">Menu</p>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid pt-5">
+        <div class="container">
+            <div class="section-title">
+            <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Pastelería AMARE</h4> 
+            <h1 class="display-4">Nuestros Pasteles</h1>
+            </div>
+            <div class="row" id="product-list-container">
+                </div>
+        </div>
+    </div>
+    <div class="container-fluid footer text-white mt-5 pt-5 px-0 position-relative overlay-top">
+        </div>
+    <div class="modal fade" id="loginRegisterModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body" style="padding: 40px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: absolute; top: 15px; right: 20px;"><span aria-hidden="true">&times;</span></button>
+                    <div id="login-form-modal" class="auth-container">
+                        <form onsubmit="handleLogin(event)">
+                            <h2>Conectarme a mi cuenta</h2>
+                            <p>Ingresa tu e-mail y contraseña:</p>
+                            <div class="auth-form-group"><input type="email" id="login-email" placeholder="Email" required></div>
+                            <div class="auth-form-group"><input type="password" id="login-password" placeholder="Contraseña" required></div>
+                            <button type="submit" class="auth-button">ENTRAR</button>
+                            <div class="auth-toggle-link">¿Nuevo cliente? <a onclick="showRegisterFormModal()">Crear cuenta</a></div>
+                        </form>
+                    </div>
+                    <div id="register-form-modal" class="auth-container">
+                        <form onsubmit="handleRegister(event)">
+                            <h2>Crear mi cuenta</h2>
+                            <p>Por favor completa la siguiente información:</p>
+                            <div class="auth-form-group"><input type="text" id="register-name" placeholder="Nombre" required></div>
+                            <div class="auth-form-group"><input type="text" id="register-lastname" placeholder="Apellidos" required></div>
+                            <div class="auth-form-group"><input type="email" id="register-email" placeholder="Email" required></div>
+                            <div class="auth-form-group"><input type="password" id="register-password" placeholder="Contraseña" required></div>
+                            <small style="display: block; text-align: center; margin-bottom: 20px; color: #777;">
+                                Al continuar acepto los <a href="#" style="color: #DA9F5B;">Términos, Condiciones</a> y <a href="#" style="color: #DA9F5B;">Aviso de Privacidad</a>.
+                            </small>
+                            <button type="submit" class="auth-button">CREAR MI CUENTA</button>
+                            <div class="auth-toggle-link">¿Ya tienes una cuenta? <a onclick="showLoginFormModal()">Entrar aquí</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+    <script src="js/main.js"></script>
+    
+    
+    <script>
+        // --- 1. CONFIGURACIÓN ---
+        const apiKey = 'HokaiA170603'; 
+        const apiUrl = 'http://localhost/dolibarr/api/index.php/products';
+        const registerApiUrl = 'http://localhost/dolibarr/api/index.php/thirdparties'; 
+        
+        // --- 2. NOS CONECTAMOS AL CARGAR LA PÁGINA ---
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchProducts();     // Llama a los productos
+            updateCartCounter(); // Actualiza el 🛒
+            updateUserStatus();  // Actualiza el 👤
+        });
+
+        // =================================== -->
+        // ¡FUNCIÓN DE IMAGEN LOCAL CORREGIDA!
+        // (Usa el "mapa" de tus archivos)
+        // =================================== -->
+        function getProductImage(productNameFromDolibarr) {
+            // Limpia el nombre de Dolibarr para que coincida con el nombre de tu carpeta
+            const folderName = productNameFromDolibarr.trim(); 
+
+            // --- ESTE ES EL "MAPA" ---
+            // (Basado en tus carpetas e imágenes)
+            const imageMap = {
+                'Pastel 3 Leches de Vainilla': '3 Leches de Vainilla.webp',
+                'Pastel 3 Leches de Chocolate': '3 Leches de Chocolate.webp',
+                'Pastel Amarettino': 'Amarettino.webp',
+                'Pastel Carajillo': 'Carajillo.webp',
+                'Pastel Cero Azucar': 'Cero Azucar.webp',
+                'Pastel Durazno': 'Durazno.webp',
+                'Pastel de Guayaba': 'Guayaba.webp',
+                'Pastel Mil Hojas': 'Mil Hojas.webp',
+                'Pastel Moka': 'Moka.webp',
+                'Pastel Otelo': 'Otelo.webp',
+                'Pastel Gansito': 'Pastel Gansito.webp',
+                'Pastel Pingüinos': 'Pastel Pinguinos.webp',
+                'Pastel Tiramisú': 'Pastel Tiramisú.webp',
+                'Salón Petit': 'Petit.webp',
+                'Pastel Piña Colada': 'Piña Colada.webp',
+                'Pastel Queso con Frutos Rojos': 'Queso con Frutos Rojos.webp',
+                'Pastel Salón': 'Salon.webp',
+                'Pastel Strawberry': 'Strawberry.webp',
+                '4 Chocolates Individual': '4 Chocolates.webp',
+                'Pastel 4 Chocolates': 'Pastel 4 Chocolates.webp',
+                'Pastel Salón Cero Azúcar': 'Cero Azucar.webp'
+
+            };
+
+            const fileName = imageMap[folderName]; // Buscamos el nombre en el mapa
+
+            if (fileName) {
+                // ¡Éxito! Construimos la ruta completa
+                return `img/Pasteles/${fileName}`;
+            } else {
+                // Si el pastel no está en el mapa, usamos una imagen por defecto
+                console.warn(`No se encontró imagen en el MAPA para: ${folderName}`);
+                return 'img/img2.webp'; // (Imagen genérica)
+            }
+        }
+
+        // --- 3. FUNCIÓN PARA OBTENER PRODUCTOS ---
+        function fetchProducts() {
+            const container = document.getElementById('product-list-container');
+            container.innerHTML = '<p>Cargando pasteles...</p>'; 
+
+            fetch(apiUrl + '?limit=20', {
+                method: 'GET',
+                headers: { 'Accept': 'application/json', 'DOLAPIKEY': apiKey }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error de red o API. Código: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(products => {
+                container.innerHTML = ''; 
+                if (products.length === 0) {
+                    container.innerHTML = '<p>No hay productos en Dolibarr. ¡Agrega algunos!</p>';
+                    return;
+                }
+
+                // --- 4. DIBUJAMOS CADA PRODUCTO ---
+                products.forEach(product => {
+                    const productId = product.id;
+                    const productName = product.label.replace(/'/g, "\\'"); 
+                    const productPrice = Number(product.price).toFixed(2);
+                    
+                    // =================================== -->
+                    // ¡AQUÍ ESTÁ LA CORRECCIÓN DE SINTAXIS! (col-sm-4)
+                    // =================================== -->
+                    const productHtml = `
+                        <div class="col-lg-6">
+                            <div class="row align-items-center mb-5">
+                                <div class="col-4 col-sm-4"> <a href="producto.html?id=${productId}">
+                                        <img class="w-100 rounded-circle mb-4 mb-sm-0" 
+                                             src="${getProductImage(product.label)}" 
+                                             alt="Imagen del ${product.label}"
+                                             style="height: 120px; width: 120px; object-fit: cover;">
+                                    </a>
+                                    
+                                    <h5 class="menu-price" style="width: 75px; height: 75px; font-size: 18px; line-height: 75px; padding: 0;">
+                                        $${productPrice}
+                                    </h5>
+                                </div>
+                                
+                                <div class="col-8 col-sm-8">
+                                
+                                    <a href="producto.html?id=${productId}" class="product-link" style="text-decoration: none;">
+                                        <h4>${product.label}</h4>
+                                    </a>
+                                    
+                                    <button class="btn btn-primary mt-3" 
+                                            onclick="addToCart(${productId}, '${productName}', ${productPrice})">
+                                        Añadir al Carrito
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += productHtml;
+                });
+            })
+            .catch(error => {
+                console.error('Error al conectar con Dolibarr:', error);
+                container.innerHTML = '<div class="error-message" style="color: red; padding: 20px; background: #ffeeee; border: 1px solid red; border-radius: 5px;">' +
+                                      '<strong>¡Error!</strong> No se pudo conectar a Dolibarr.<br>' +
+                                      'Verifica que tu clave de API sea correcta y que XAMPP esté corriendo.' +
+                                      '<br><small>' + error.message + '</small></div>';
+            });
+        }
+
+        // --- 5. LÓGICA DEL CARRITO (Tu código) ---
+        
+        function isUserLoggedIn() {
+            if (localStorage.getItem('amare_customer_id')) {
+                return true;
+            }
+            return false;
+        } 
+
+        function addToCart(id, name, price) {
+            if (!isUserLoggedIn()) {
+                $('#loginRegisterModal').modal('show');
+                return; 
+            }
+            console.log("Añadiendo al carrito:", id, name, price);
+            let cart = JSON.parse(localStorage.getItem('pasteleriaCart')) || [];
+            let existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id: id, name: name, price: price, quantity: 1 });
+            }
+            localStorage.setItem('pasteleriaCart', JSON.stringify(cart));
+            updateCartCounter();
+        }
+
+        function updateCartCounter() {
+            let cart = JSON.parse(localStorage.getItem('pasteleriaCart')) || [];
+            let count = cart.length; 
+            let counterSpan = document.getElementById('cart-counter-span');
+            if (counterSpan) {
+                if (count > 0) { counterSpan.innerText = `(${count})`; } 
+                else { counterSpan.innerText = '(0)'; }
+            }
+        }
+        
+        // --- 6. LÓGICA DEL MODAL Y LOGIN (Tu código) ---
+        
+        function updateUserStatus() {
+            const userName = localStorage.getItem('amare_customer_name');
+            const loginLink = document.getElementById('login-link');
+            const userDropdown = document.getElementById('user-dropdown');
+            const userNameDisplay = document.getElementById('user-name-display');
+            if (userName) {
+                if (loginLink) loginLink.style.display = 'none';
+                if (userDropdown) userDropdown.style.display = 'block';
+                if (userNameDisplay) userNameDisplay.innerText = "Hola, " + userName;
+            } else {
+                if (loginLink) loginLink.style.display = 'block';
+                if (userDropdown) userDropdown.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('amare_customer_id');
+            localStorage.removeItem('amare_customer_name');
+            alert("Has cerrado la sesión.");
+            window.location.href = 'index.html';
+        }
+
+        const loginFormModal = document.getElementById('login-form-modal');
+        const registerFormModal = document.getElementById('register-form-modal');
+
+        function showRegisterFormModal() {
+            if(loginFormModal) loginFormModal.style.display = 'none';
+            if(registerFormModal) registerFormModal.style.display = 'block';
+        }
+        function showLoginFormModal() {
+            if(registerFormModal) registerFormModal.style.display = 'none';
+            if(loginFormModal) loginFormModal.style.display = 'block';
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault(); 
+            const email = document.getElementById('login-email').value;
+            const loginApiUrl = `http://localhost/dolibarr/api/index.php/thirdparties?email=${encodeURIComponent(email)}`;
+            let statusMessageEl = document.querySelector('#login-form-modal .auth-toggle-link');
+            statusMessageEl.innerHTML = '<p style="color: blue;">Buscando cuenta...</p>';
+
+            fetch(loginApiUrl, {
+                method: 'GET',
+                headers: {'Accept': 'application/json', 'DOLAPIKEY': apiKey }
+            })
+            .then(response => {
+                if (!response.ok) { return response.json().then(err => { throw new Error(err.error.message || 'Error del servidor'); }); }
+                return response.json(); 
+            })
+            .then(data => {
+                if (data.length > 0) {
+                    const customer = data[0]; 
+                    localStorage.setItem('amare_customer_id', customer.id);
+                    localStorage.setItem('amare_customer_name', customer.name.split(' ')[0]);
+                    alert('¡Bienvenido de nuevo, ' + customer.name.split(' ')[0] + '!');
+                    $('#loginRegisterModal').modal('hide');
+                    updateUserStatus(); 
+                    window.location.reload(); 
+                } else {
+                    throw new Error("Email no encontrado. Por favor, crea una cuenta.");
+                }
+            })
+            .catch(error => {
+                console.error('Error al iniciar sesión:', error);
+                statusMessageEl.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            });
+        }
+        
+        function handleRegister(event) {
+            event.preventDefault(); 
+            const name = document.getElementById('register-name').value;
+            const lastname = document.getElementById('register-lastname').value;
+            const email = document.getElementById('register-email').value;
+            
+            let statusMessageEl = document.querySelector('#register-form-modal .auth-toggle-link');
+            statusMessageEl.innerHTML = '<p style="color: blue;">Creando cuenta...</p>';
+
+            const customerData = {
+                'name': `${name} ${lastname}`, 'email': email, 'client': '1', 'code_client': '-1'
+            };
+
+            fetch(registerApiUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'DOLAPIKEY': apiKey },
+                body: JSON.stringify(customerData)
+            })
+            .then(response => {
+                if (!response.ok) { return response.json().then(err => { throw new Error(err.error.message); }); }
+                return response.json(); 
+            })
+            .then(newCustomerId => {
+                localStorage.setItem('amare_customer_id', newCustomerId);
+                localStorage.setItem('amare_customer_name', name);
+                alert('¡Bienvenido, ' + name + '! Tu cuenta ha sido creada.');
+                $('#loginRegisterModal').modal('hide');
+                updateUserStatus(); 
+            })
+            .catch(error => {
+                console.error('Error al crear el cliente:', error);
+                statusMessageEl.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>
